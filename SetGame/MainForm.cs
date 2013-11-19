@@ -49,8 +49,11 @@ namespace SetGame
                     foreach (var cp in selected)
                         flowLayoutPanel1.Controls.Remove(cp);
                     _game.IncrementScore(0);
+
                     if (flowLayoutPanel1.Controls.Count < 12)
                         deal(3);
+                    else
+                        checkOptions();
                 }
             }
         }
@@ -68,11 +71,27 @@ namespace SetGame
                     cardPanel.Click += new EventHandler(cardPanel_Click);
                     return cardPanel;
                 }).ToArray());
+
+            checkOptions();
+        }
+
+        IEnumerable<Card> Cards
+        {
+            get
+            {
+                return flowLayoutPanel1.Controls.OfType<CardPanel>().Select(cp => cp.Card);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             deal(3);
+        }
+
+        private void checkOptions()
+        {
+            var choices = _game.GetOptions(Cards);
+            label1.Text = choices.Count > 0 ? "" : "No options left.";
         }
     }
 }
