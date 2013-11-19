@@ -75,11 +75,19 @@ namespace SetGame
             checkOptions();
         }
 
+        IEnumerable<CardPanel> CardPanels
+        {
+            get
+            {
+                return flowLayoutPanel1.Controls.OfType<CardPanel>();
+            }
+        }
+        
         IEnumerable<Card> Cards
         {
             get
             {
-                return flowLayoutPanel1.Controls.OfType<CardPanel>().Select(cp => cp.Card);
+                return CardPanels.Select(cp => cp.Card);
             }
         }
 
@@ -92,6 +100,21 @@ namespace SetGame
         {
             var choices = _game.GetOptions(Cards);
             label1.Text = choices.Count > 0 ? "" : "No options left.";
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var choices = _game.GetOptions(Cards);
+            if (choices.Count > 0)
+            {
+                foreach (var cp in CardPanels)
+                    cp.Selected = false;
+
+                Random rand = new Random();
+                var panel = CardPanels.Where(cp => choices.Contains(cp.Card)).OrderBy(cp => rand.Next()).First();
+                panel.Selected = true;
+                panel.Invalidate();
+            }
         }
     }
 }
