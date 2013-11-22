@@ -56,11 +56,19 @@ namespace SetGame
             private set;
         }
 
+        private bool _selected = false;
         [DefaultValue(false)]
         public bool Selected
         {
-            get;
-            set;
+            get { return _selected; }
+            set
+            {
+                if (_selected != value)
+                {
+                    _selected = value;
+                    Invalidate();
+                }
+            }
         }
 
         [DefaultValue(150)]

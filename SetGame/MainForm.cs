@@ -30,7 +30,6 @@ namespace SetGame
                 return;
 
             cardPanel.Selected = !cardPanel.Selected;
-            cardPanel.Invalidate();
 
             var selected = flowLayoutPanel1.Controls.OfType<CardPanel>().Where(cp => cp.Selected).ToList();
             if (selected.Count == 3)
@@ -99,7 +98,7 @@ namespace SetGame
         private void checkOptions()
         {
             var choices = _game.GetOptions(Cards);
-            label1.Text = choices.Count > 0 ? "" : "No options left.";
+            label1.Text = choices.Count > 0 ? "" : "No moves.";
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -113,7 +112,6 @@ namespace SetGame
                 Random rand = new Random();
                 var panel = CardPanels.Where(cp => choices.Contains(cp.Card)).OrderBy(cp => rand.Next()).First();
                 panel.Selected = true;
-                panel.Invalidate();
             }
         }
     }
