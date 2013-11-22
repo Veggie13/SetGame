@@ -31,16 +31,14 @@ namespace SetGame
 
             cardPanel.Selected = !cardPanel.Selected;
 
-            var selected = flowLayoutPanel1.Controls.OfType<CardPanel>().Where(cp => cp.Selected).ToList();
+            var selected = CardPanels.Where(cp => cp.Selected).ToList();
             if (selected.Count == 3)
             {
                 if (!_game.Validate(selected[0].Card, selected[1].Card, selected[2].Card))
                 {
                     foreach (var cp in selected)
-                    {
                         cp.Selected = false;
-                        cp.Invalidate();
-                    }
+
                     _game.PenalizePlayer(0);
                 }
                 else
