@@ -9,7 +9,7 @@ namespace SetGame
     {
         private PropertySet _properties;
 
-        public Card(Colours colour, Shades shade, Shapes shape, Numbers number)
+        public Card(Colours colour, Shades shade, ShapeID shape, Numbers number)
         {
             _properties = new PropertySet(
                 (int)PropertyTypes.Colour, (int)colour,
@@ -26,7 +26,7 @@ namespace SetGame
             {
                 foreach (Shades shade in Enum.GetValues(typeof(Shades)))
                 {
-                    foreach (Shapes shape in Enum.GetValues(typeof(Shapes)))
+                    foreach (ShapeID shape in Enum.GetValues(typeof(ShapeID)))
                     {
                         foreach (Numbers number in Enum.GetValues(typeof(Numbers)))
                             deck.Add(new Card(colour, shade, shape, number));
@@ -47,9 +47,9 @@ namespace SetGame
             get { return (Shades)_properties[PropertyTypes.Shade]; }
         }
 
-        public Shapes Shape
+        public ShapeID Shape
         {
-            get { return (Shapes)_properties[PropertyTypes.Shape]; }
+            get { return (ShapeID)_properties[PropertyTypes.Shape]; }
         }
 
         public Numbers Number

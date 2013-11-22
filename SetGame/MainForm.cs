@@ -12,6 +12,7 @@ namespace SetGame
     public partial class MainForm : Form
     {
         private Game _game = new Game(1);
+        private CardRenderer _renderer = new CardRenderer(Shapes.Pill, Shapes.Diamond, Shapes.ZigZag, Color.Red, Color.Green, Color.Purple);
 
         public MainForm()
         {
@@ -63,7 +64,8 @@ namespace SetGame
                     var cardPanel = new CardPanel(c)
                     {
                         Width = flowLayoutPanel1.Width / 3 - 20,
-                        Height = flowLayoutPanel1.Height / 5 - 20
+                        Height = flowLayoutPanel1.Height / 5 - 20,
+                        Renderer = _renderer
                     };
                     cardPanel.Click += new EventHandler(cardPanel_Click);
                     return cardPanel;

@@ -17,6 +17,8 @@ namespace SetGame
 
             Card = card;
 
+            DoubleBuffered = true;
+            
             this.Paint += new PaintEventHandler(CardPanel_Paint);
         }
 
@@ -28,9 +30,9 @@ namespace SetGame
             e.Graphics.FillRectangle(Brushes.White, rect);
             e.Graphics.DrawRectangle(new Pen(Selected ? Color.Orange : Color.Black, 3f), rect);
 
-            var poly = CardRenderer.GetPolygon(Card.Shape);
-            var color = CardRenderer.GetColor(Card.Colour);
-            var inner = CardRenderer.GetBrush(color, Card.Shade);
+            var poly = Renderer.GetPolygon(Card.Shape);
+            var color = Renderer.GetColor(Card.Colour);
+            var inner = Renderer.GetBrush(Card.Colour, Card.Shade);
             var outer = new Pen(color, 2f);
 
             int num = (int)Card.Number;
@@ -54,6 +56,13 @@ namespace SetGame
         {
             get;
             private set;
+        }
+
+        [Browsable(false)]
+        public CardRenderer Renderer
+        {
+            get;
+            set;
         }
 
         private bool _selected = false;

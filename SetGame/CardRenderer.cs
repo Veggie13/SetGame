@@ -7,67 +7,70 @@ using System.Drawing.Drawing2D;
 
 namespace SetGame
 {
-    static class CardRenderer
+    class CardRenderer
     {
-        public static Point[] GetPolygon(Shapes shape)
+        private static readonly Dictionary<Shapes, Point[]> ShapeMap = new Dictionary<Shapes, Point[]>();
+        
+        static CardRenderer()
         {
-            switch (shape)
-            {
-                case Shapes.Diamond:
-                    return new[] {
-                        new Point(0, -20),
-                        new Point(10, 0),
-                        new Point(0, 20),
-                        new Point(-10, 0)
-                    };
-                case Shapes.Pill:
-                    return new[] {
-                        new Point(10, -20),
-                        new Point(10, 20),
-                        new Point(-10, 20),
-                        new Point(-10, -20)
-                    };
-                case Shapes.Tilde:
-                    return new[] {
-                        new Point(5, -20),
-                        new Point(15, -10),
-                        new Point(-5, 10),
-                        new Point(5, 20),
-                        new Point(-5, 20),
-                        new Point(-15, 10),
-                        new Point(5, -10),
-                        new Point(-5, -20)
-                    };
-                default:
-                    return null;
-            }
+            ShapeMap[Shapes.Pill] = new[] {
+                new Point(10, -20),
+                new Point(10, 20),
+                new Point(-10, 20),
+                new Point(-10, -20)
+            };
+            ShapeMap[Shapes.Diamond] = new[] {
+                new Point(0, -20),
+                new Point(10, 0),
+                new Point(0, 20),
+                new Point(-10, 0)
+            };
+            ShapeMap[Shapes.ZigZag] = new[] {
+                new Point(5, -20),
+                new Point(15, -10),
+                new Point(-5, 10),
+                new Point(5, 20),
+                new Point(-5, 20),
+                new Point(-15, 10),
+                new Point(5, -10),
+                new Point(-5, -20)
+            };
         }
 
-        public static Color GetColor(Colours colour)
+        private Dictionary<ShapeID, Shapes> _shapes = new Dictionary<ShapeID, Shapes>();
+        private Dictionary<Colours, Color> _colours = new Dictionary<Colours, Color>();
+
+        public CardRenderer(Shapes alpha, Shapes beta, Shapes gamma, Color first, Color second, Color third)
         {
-            switch (colour)
-            {
-                case Colours.Green:
-                    return Color.Green;
-                case Colours.Purple:
-                    return Color.Purple;
-                case Colours.Red:
-                    return Color.Red;
-                default:
-                    return Color.Black;
-            }
+            _shapes[ShapeID.Alpha] = alpha;
+            _shapes[ShapeID.Beta] = beta;
+            _shapes[ShapeID.Gamma] = gamma;
+
+            _colours[Colours.First] = first;
+            _colours[Colours.Second] = second;
+            _colours[Colours.Third] = third;
         }
 
-        public static Brush GetBrush(Color color, Shades shade)
+        public Point[] GetPolygon(ShapeID shape)
+        {
+            return ShapeMap[_shapes[shape]];
+        }
+
+        public Color GetColor(Colours colour)
+        {
+            return _colours[colour];
+        }
+
+        public Brush GetBrush(Colours colour, Shades shade)
         {
             switch (shade)
             {
                 case Shades.Empty:
                     return Brushes.White;
                 case Shades.Half:
-                    return new HatchBrush(HatchStyle.NarrowHorizontal, color, Color.Transparent);
+                    return new HatchBrush(HatchStyle.NarrowHorizontal, GetColor(colour), Color.Transparent);
                 case Shades.Solid:
-                    return new SolidBrush(color);
+                    return new SolidBrush(GetColor(colour));
                 default:
                     return null;
             }

@@ -16,17 +16,17 @@ namespace SetGame
             Random rand = new Random();
             _deck = Card.GenerateDeck().OrderBy(c => rand.Next()).ToList();
 
-            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Colour == Colours.Green)));
-            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Colour == Colours.Purple)));
-            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Colour == Colours.Red)));
+            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Colour == Colours.Second)));
+            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Colour == Colours.Third)));
+            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Colour == Colours.First)));
 
             _sets.Add(new HashSet<Card>(_deck.Where(c => c.Shade == Shades.Empty)));
             _sets.Add(new HashSet<Card>(_deck.Where(c => c.Shade == Shades.Half)));
             _sets.Add(new HashSet<Card>(_deck.Where(c => c.Shade == Shades.Solid)));
 
-            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Shape == Shapes.Diamond)));
-            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Shape == Shapes.Pill)));
-            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Shape == Shapes.Tilde)));
+            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Shape == ShapeID.Beta)));
+            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Shape == ShapeID.Alpha)));
+            _sets.Add(new HashSet<Card>(_deck.Where(c => c.Shape == ShapeID.Gamma)));
 
             _sets.Add(new HashSet<Card>(_deck.Where(c => c.Number == Numbers.One)));
             _sets.Add(new HashSet<Card>(_deck.Where(c => c.Number == Numbers.Two)));

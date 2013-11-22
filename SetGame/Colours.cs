@@ -2,8 +2,8 @@
 {
     enum Colours
     {
-        Red = 1,
-        Green,
-        Purple
+        First = 1,
+        Second,
+        Third
     }
 }

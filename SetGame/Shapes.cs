@@ -1,9 +1,20 @@
 ﻿namespace SetGame
 {
+    enum ShapeID
+    {
+        Alpha = 1,
+        Beta,
+        Gamma
+    }
+
     enum Shapes
     {
-        Pill = 1,
+        Pill,
         Diamond,
-        Tilde
+        ZigZag,
+        HourGlass,
+        Chevron,
+        Ellipse,
+        Crescent
     }
 }
