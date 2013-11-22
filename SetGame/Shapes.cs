@@ -14,7 +14,6 @@
         ZigZag,
         HourGlass,
         Chevron,
-        Ellipse,
         Crescent
     }
 }

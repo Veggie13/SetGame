@@ -35,6 +35,33 @@ namespace SetGame
                 new Point(5, -10),
                 new Point(-5, -20)
             };
+            ShapeMap[Shapes.HourGlass] = new[] {
+                new Point(10, -20),
+                new Point(0, 0),
+                new Point(10, 20),
+                new Point(-10, 20),
+                new Point(0, 0),
+                new Point(-10, -20)
+            };
+            ShapeMap[Shapes.Chevron] = new[] {
+                new Point(0, -20),
+                new Point(10, 20),
+                new Point(0, 10),
+                new Point(-10, 20)
+            };
+            ShapeMap[Shapes.Crescent] = new[] {
+                new Point(-10, -20),
+                new Point(-5, -19),
+                new Point(0, -17),
+                new Point(5, -12),
+                new Point(9, -4),
+                new Point(10, 0),
+                new Point(9, 4),
+                new Point(5, 12),
+                new Point(0, 17),
+                new Point(-5, 19),
+                new Point(-10, 20)
+            };
         }
 
         private Dictionary<ShapeID, Shapes> _shapes = new Dictionary<ShapeID, Shapes>();

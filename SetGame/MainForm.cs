@@ -12,7 +12,7 @@ namespace SetGame
     public partial class MainForm : Form
     {
         private Game _game = new Game(1);
-        private CardRenderer _renderer = new CardRenderer(Shapes.Pill, Shapes.Diamond, Shapes.ZigZag, Color.Red, Color.Green, Color.Purple);
+        private CardRenderer _renderer = new CardRenderer(Shapes.HourGlass, Shapes.Chevron, Shapes.Crescent, Color.Fuchsia, Color.Orange, Color.LightBlue);
 
         public MainForm()
         {
