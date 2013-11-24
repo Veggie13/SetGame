@@ -12,7 +12,7 @@ namespace SetGame
     public partial class MainForm : Form
     {
         private Game _game = new Game(1);
-        private CardRenderer _renderer = new CardRenderer(Shapes.HourGlass, Shapes.Chevron, Shapes.Crescent, Color.Fuchsia, Color.Orange, Color.LightBlue);
+        private CardRenderer _renderer = new CardRenderer(Shapes.Pill, Shapes.Diamond, Shapes.ZigZag, Color.Red, Color.Green, Color.Purple);
 
         public MainForm()
         {
@@ -112,6 +112,15 @@ namespace SetGame
                 Random rand = new Random();
                 var panel = CardPanels.Where(cp => choices.Contains(cp.Card)).OrderBy(cp => rand.Next()).First();
                 panel.Selected = true;
+            }
+        }
+
+        private void displayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dlg = new DisplayOptionsDlg(_renderer);
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                Invalidate(true);
             }
         }
     }

@@ -64,6 +64,11 @@ namespace SetGame
             };
         }
 
+        public static Point[] GetPolygon(Shapes shape)
+        {
+            return ShapeMap[shape];
+        }
+
         private Dictionary<ShapeID, Shapes> _shapes = new Dictionary<ShapeID, Shapes>();
         private Dictionary<Colours, Color> _colours = new Dictionary<Colours, Color>();
 
@@ -76,6 +81,42 @@ namespace SetGame
             _colours[Colours.First] = first;
             _colours[Colours.Second] = second;
             _colours[Colours.Third] = third;
+        }
+
+        public Shapes ShapeAlpha
+        {
+            get { return _shapes[ShapeID.Alpha]; }
+            set { _shapes[ShapeID.Alpha] = value; }
+        }
+
+        public Shapes ShapeBeta
+        {
+            get { return _shapes[ShapeID.Beta]; }
+            set { _shapes[ShapeID.Beta] = value; }
+        }
+
+        public Shapes ShapeGamma
+        {
+            get { return _shapes[ShapeID.Gamma]; }
+            set { _shapes[ShapeID.Gamma] = value; }
+        }
+
+        public Color ColourFirst
+        {
+            get { return _colours[Colours.First]; }
+            set { _colours[Colours.First] = value; }
+        }
+
+        public Color ColourSecond
+        {
+            get { return _colours[Colours.Second]; }
+            set { _colours[Colours.Second] = value; }
+        }
+
+        public Color ColourThird
+        {
+            get { return _colours[Colours.Third]; }
+            set { _colours[Colours.Third] = value; }
         }
 
         public Point[] GetPolygon(ShapeID shape)

@@ -78,7 +78,7 @@ namespace SetGame
         }
     }
 
-    static class Extensions
+    static partial class Extensions
     {
         public static List<HashSet<T>> PowerSet<T>(this IEnumerable<T> startingSet, int minSubsetSize, int maxSize)
         {

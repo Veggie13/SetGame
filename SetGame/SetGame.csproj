@@ -55,6 +55,12 @@
     </Compile>
     <Compile Include="CardRenderer.cs" />
     <Compile Include="Colours.cs" />
+    <Compile Include="DisplayOptionsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DisplayOptionsDlg.Designer.cs">
+      <DependentUpon>DisplayOptionsDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Game.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -69,6 +75,9 @@
     <Compile Include="PropertySet.cs" />
     <Compile Include="Shades.cs" />
     <Compile Include="Shapes.cs" />
+    <EmbeddedResource Include="DisplayOptionsDlg.resx">
+      <DependentUpon>DisplayOptionsDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
