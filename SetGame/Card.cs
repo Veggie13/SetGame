@@ -7,7 +7,9 @@ namespace SetGame
 {
     class Card
     {
+        #region Class Members
         private PropertySet _properties;
+        #endregion
 
         public Card(Colours colour, Shades shade, ShapeID shape, Numbers number)
         {
@@ -37,6 +39,7 @@ namespace SetGame
             return deck;
         }
 
+        #region Properties
         public Colours Colour
         {
             get { return (Colours)_properties[PropertyTypes.Colour]; }
@@ -61,7 +64,9 @@ namespace SetGame
         {
             get { return _properties; }
         }
+        #endregion
 
+        #region Overrides
         public override bool Equals(object obj)
         {
             if (obj is Card)
@@ -81,5 +86,6 @@ namespace SetGame
         {
             return string.Format("{0}{1}{2}{3}", (int)Colour, (int)Shade, (int)Shape, (int)Number);
         }
+        #endregion
     }
 }

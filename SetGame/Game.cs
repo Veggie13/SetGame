@@ -10,6 +10,7 @@ namespace SetGame
     {
         private const int ShotClockLimit = 5;
 
+        #region Class Members
         private List<Card> _deck;
         private List<Card> _board = new List<Card>();
         private List<HashSet<Card>> _sets = new List<HashSet<Card>>();
@@ -18,6 +19,7 @@ namespace SetGame
         private int _reservation = -1;
         private Timer _timer = new Timer();
         private int _shotClock;
+        #endregion
 
         public Game()
         {
@@ -43,6 +45,7 @@ namespace SetGame
             _timer.Tick += new EventHandler(_timer_Tick);
         }
 
+        #region Events
         public event Action BoardModified = () => { };
         public event Action ScoresChanged = () => { };
         public event Action PlayersChanged = () => { };
@@ -50,7 +53,9 @@ namespace SetGame
         public event Action<int> ShotClockTick = (i) => { };
         public event Action EndSet = () => { };
         public event Action GameOver = () => { };
+        #endregion
 
+        #region Properties
         public bool Active
         {
             get { return _started; }
@@ -75,7 +80,9 @@ namespace SetGame
         {
             get { return _board; }
         }
+        #endregion
 
+        #region Public Methods
         public void AddPlayer(Player player)
         {
             if (_started)
@@ -118,16 +125,10 @@ namespace SetGame
             }
         }
 
-        public List<Card> Deal(int n)
+        public HashSet<Card> GetOptions(IEnumerable<Card> set)
         {
-            var result = _deck.Take(n).ToList();
-            if (result.Count > 0)
-                _deck.RemoveRange(0, result.Count);
-
-            _board.AddRange(result);
-            BoardModified();
-
-            return result;
+            return set.PowerSet(3, 3).Where(s => validate(s))
+                .Aggregate(new HashSet<Card>(), (a, s) => { a.UnionWith(s); return a; });
         }
 
         public bool MakePlay(int player, Card c1, Card c2, Card c3)
@@ -144,7 +145,7 @@ namespace SetGame
                 _board.RemoveAll(c => choice.Contains(c));
                 replenishBoard();
 
-                IncrementScore(player);
+                incrementScore(player);
 
                 if (_deck.Count == 0 && GetOptions(_board).Count == 0)
                     EndGame();
@@ -152,11 +153,13 @@ namespace SetGame
             }
             else
             {
-                PenalizePlayer(player);
+                penalizePlayer(player);
                 return false;
             }
         }
+        #endregion
 
+        #region Event Handlers
         private void _timer_Tick(object sender, EventArgs e)
         {
             _timer.Stop();
@@ -165,7 +168,7 @@ namespace SetGame
             {
                 if (--_shotClock == 0)
                 {
-                    PenalizePlayer(_reservation);
+                    penalizePlayer(_reservation);
                     EndSet();
                     _reservation = -1;
                 }
@@ -176,6 +179,20 @@ namespace SetGame
                 }
             }
         }
+        #endregion
+
+        #region Private Helpers
+        private List<Card> deal(int n)
+        {
+            var result = _deck.Take(n).ToList();
+            if (result.Count > 0)
+                _deck.RemoveRange(0, result.Count);
+
+            _board.AddRange(result);
+            BoardModified();
+
+            return result;
+        }
 
         private bool validate(HashSet<Card> choice)
         {
@@ -185,19 +202,13 @@ namespace SetGame
             return !list.Contains(2);
         }
 
-        public HashSet<Card> GetOptions(IEnumerable<Card> set)
-        {
-            return set.PowerSet(3, 3).Where(s => validate(s))
-                .Aggregate(new HashSet<Card>(), (a, s) => { a.UnionWith(s); return a; });
-        }
-
-        public void IncrementScore(int player)
+        private void incrementScore(int player)
         {
             _players[player].Score += 3;
             ScoresChanged();
         }
 
-        public void PenalizePlayer(int player)
+        private void penalizePlayer(int player)
         {
             _players[player].Score--;
             ScoresChanged();
@@ -213,9 +224,10 @@ namespace SetGame
         {
             while (_deck.Count > 0 && (_board.Count < 12 || GetOptions(_board).Count == 0))
             {
-                Deal(3);
+                deal(3);
             }
         }
+        #endregion
     }
 
     static partial class Extensions

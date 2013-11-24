@@ -22,35 +22,7 @@ namespace SetGame
             this.Paint += new PaintEventHandler(CardPanel_Paint);
         }
 
-        void CardPanel_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.TranslateTransform(Width / 2, Height / 2);
-
-            var rect = new Rectangle(-CardWidth / 2, -CardHeight / 2, CardWidth, CardHeight);
-            e.Graphics.FillRectangle(Brushes.White, rect);
-            e.Graphics.DrawRectangle(new Pen(Selected ? Color.Orange : Color.Black, 3f), rect);
-
-            var poly = Renderer.GetPolygon(Card.Shape);
-            var color = Renderer.GetColor(Card.Colour);
-            var inner = Renderer.GetBrush(Card.Colour, Card.Shade);
-            var outer = new Pen(color, 2f);
-
-            int num = (int)Card.Number;
-
-            e.Graphics.TranslateTransform(-15f * (num - 1), 0f);
-            for (int i = 0; i < num; i++)
-            {
-                drawPoly(e.Graphics, poly, inner, outer);
-                e.Graphics.TranslateTransform(30f, 0f);
-            }
-        }
-
-        private void drawPoly(Graphics g, Point[] poly, Brush inner, Pen outer)
-        {
-            g.FillPolygon(inner, poly);
-            g.DrawPolygon(outer, poly);
-        }
-
+        #region Properties
         [Browsable(false)]
         public Card Card
         {
@@ -93,5 +65,39 @@ namespace SetGame
             get;
             set;
         }
+        #endregion
+
+        #region Event Handlers
+        private void CardPanel_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.TranslateTransform(Width / 2, Height / 2);
+
+            var rect = new Rectangle(-CardWidth / 2, -CardHeight / 2, CardWidth, CardHeight);
+            e.Graphics.FillRectangle(Brushes.White, rect);
+            e.Graphics.DrawRectangle(new Pen(Selected ? Color.Orange : Color.Black, 3f), rect);
+
+            var poly = Renderer.GetPolygon(Card.Shape);
+            var color = Renderer.GetColor(Card.Colour);
+            var inner = Renderer.GetBrush(Card.Colour, Card.Shade);
+            var outer = new Pen(color, 2f);
+
+            int num = (int)Card.Number;
+
+            e.Graphics.TranslateTransform(-15f * (num - 1), 0f);
+            for (int i = 0; i < num; i++)
+            {
+                drawPoly(e.Graphics, poly, inner, outer);
+                e.Graphics.TranslateTransform(30f, 0f);
+            }
+        }
+        #endregion
+
+        #region Private Helpers
+        private void drawPoly(Graphics g, Point[] poly, Brush inner, Pen outer)
+        {
+            g.FillPolygon(inner, poly);
+            g.DrawPolygon(outer, poly);
+        }
+        #endregion
     }
 }

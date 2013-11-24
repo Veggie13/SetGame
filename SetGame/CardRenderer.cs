@@ -9,6 +9,7 @@ namespace SetGame
 {
     class CardRenderer
     {
+        #region Static Members
         private static readonly Dictionary<Shapes, Point[]> ShapeMap = new Dictionary<Shapes, Point[]>();
         
         static CardRenderer()
@@ -68,9 +69,12 @@ namespace SetGame
         {
             return ShapeMap[shape];
         }
+        #endregion
 
+        #region Class Members
         private Dictionary<ShapeID, Shapes> _shapes = new Dictionary<ShapeID, Shapes>();
         private Dictionary<Colours, Color> _colours = new Dictionary<Colours, Color>();
+        #endregion
 
         public CardRenderer(Shapes alpha, Shapes beta, Shapes gamma, Color first, Color second, Color third)
         {
@@ -83,6 +87,7 @@ namespace SetGame
             _colours[Colours.Third] = third;
         }
 
+        #region Properties
         public Shapes ShapeAlpha
         {
             get { return _shapes[ShapeID.Alpha]; }
@@ -118,7 +123,9 @@ namespace SetGame
             get { return _colours[Colours.Third]; }
             set { _colours[Colours.Third] = value; }
         }
+        #endregion
 
+        #region Public Methods
         public Point[] GetPolygon(ShapeID shape)
         {
             return ShapeMap[_shapes[shape]];
@@ -143,5 +150,6 @@ namespace SetGame
                     return null;
             }
         }
+        #endregion
     }
 }

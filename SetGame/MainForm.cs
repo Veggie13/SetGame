@@ -11,9 +11,11 @@ namespace SetGame
 {
     public partial class MainForm : Form
     {
+        #region Class Members
         private Game _game = new Game();
         private CardRenderer _renderer = new CardRenderer(Shapes.Pill, Shapes.Diamond, Shapes.ZigZag, Color.Red, Color.Green, Color.Purple);
         private bool _inSet = false;
+        #endregion
 
         public MainForm()
         {
@@ -28,34 +30,66 @@ namespace SetGame
             _game.GameOver += new Action(_game_GameOver);
         }
 
-        void _game_GameOver()
+        #region Properties
+        IEnumerable<CardPanel> CardPanels
+        {
+            get
+            {
+                return flowLayoutPanel1.Controls.OfType<CardPanel>();
+            }
+        }
+
+        IEnumerable<Card> Cards
+        {
+            get
+            {
+                return CardPanels.Select(cp => cp.Card);
+            }
+        }
+        #endregion
+
+        #region Event Handlers
+        #region MainForm
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+        }
+
+        private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (_game.Active && !_inSet && e.KeyChar.ToString().ToLower() == "s")
+                callSet();
+        }
+
+        private void button_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            OnKeyPress(e);
+        }
+        #endregion
+
+        #region Game
+        private void _game_GameOver()
         {
             button1.Enabled = button2.Enabled = false;
             label1.Text = label2.Text = label3.Text = "";
             flowLayoutPanel1.Controls.Clear();
         }
 
-        void _game_ShotClockTick(int count)
+        private void _game_ShotClockTick(int count)
         {
             label3.Text = count.ToString();
         }
 
-        void _game_PlayersChanged()
+        private void _game_PlayersChanged()
         {
             printScores();
         }
 
-        void _game_ScoresChanged()
+        private void _game_ScoresChanged()
         {
             printScores();
         }
 
-        private void printScores()
-        {
-            label2.Text = string.Format("{0}: {1}", _game.Names[0], _game.Scores[0]);
-        }
-
-        void _game_EndSet()
+        private void _game_EndSet()
         {
             _inSet = false;
             label3.Text = "";
@@ -64,12 +98,12 @@ namespace SetGame
             panel1.BackColor = Control.DefaultBackColor;
         }
 
-        void _game_BeginSet(int obj)
+        private void _game_BeginSet(int obj)
         {
             _inSet = true;
         }
 
-        void _game_BoardModified()
+        private void _game_BoardModified()
         {
             button1.Enabled = false;
             button2.Enabled = false;
@@ -89,12 +123,10 @@ namespace SetGame
             button1.Enabled = true;
             button2.Enabled = true;
         }
+        #endregion
 
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-        }
-
-        void cardPanel_Click(object sender, EventArgs e)
+        #region Controls
+        private void cardPanel_Click(object sender, EventArgs e)
         {
             CardPanel cardPanel = sender as CardPanel;
             if (!_inSet || cardPanel == null)
@@ -109,20 +141,10 @@ namespace SetGame
             }
         }
 
-        IEnumerable<CardPanel> CardPanels
+        private void button1_Click(object sender, EventArgs e)
         {
-            get
-            {
-                return flowLayoutPanel1.Controls.OfType<CardPanel>();
-            }
-        }
-        
-        IEnumerable<Card> Cards
-        {
-            get
-            {
-                return CardPanels.Select(cp => cp.Card);
-            }
+            callSet();
+            this.Focus();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -139,7 +161,9 @@ namespace SetGame
             }
             this.Focus();
         }
+        #endregion
 
+        #region Menu Items
         private void displayToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var dlg = new DisplayOptionsDlg(_renderer);
@@ -147,12 +171,6 @@ namespace SetGame
             {
                 Invalidate(true);
             }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            callSet();
-            this.Focus();
         }
 
         private void newSinglePlayerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -163,22 +181,20 @@ namespace SetGame
             _game.AddPlayer(new Player("Player 1"));
             _game.BeginGame();
         }
+        #endregion
+        #endregion
+
+        #region Private Helpers
+        private void printScores()
+        {
+            label2.Text = string.Format("{0}: {1}", _game.Names[0], _game.Scores[0]);
+        }
 
         private void callSet()
         {
             panel1.BackColor = Color.Orange;
             _game.Reserve(0);
         }
-
-        private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (_game.Active && !_inSet && e.KeyChar.ToString().ToLower() == "s")
-                callSet();
-        }
-
-        private void button_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            OnKeyPress(e);
-        }
+        #endregion
     }
 }

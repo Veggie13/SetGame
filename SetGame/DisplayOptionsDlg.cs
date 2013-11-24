@@ -11,6 +11,7 @@ namespace SetGame
 {
     partial class DisplayOptionsDlg : Form
     {
+        #region Static Members
         private static readonly Dictionary<Shapes, string> ShapeNames = new Dictionary<Shapes, string>();
 
         static DisplayOptionsDlg()
@@ -22,9 +23,12 @@ namespace SetGame
             ShapeNames[Shapes.Pill] = "Pill";
             ShapeNames[Shapes.ZigZag] = "Zig-Zag";
         }
+        #endregion
 
+        #region Class Members
         private bool _initializing = true;
         private CardRenderer _renderer;
+        #endregion
 
         public DisplayOptionsDlg(CardRenderer renderer)
         {
@@ -33,6 +37,7 @@ namespace SetGame
             _renderer = renderer;
         }
 
+        #region Properties
         private Shapes SelectedShape1
         {
             get { return ((KeyValuePair<Shapes, string>)_cboShape1.SelectedItem).Key; }
@@ -50,7 +55,9 @@ namespace SetGame
             get { return ((KeyValuePair<Shapes, string>)_cboShape3.SelectedItem).Key; }
             set { _cboShape3.SelectedValue = value; }
         }
+        #endregion
 
+        #region Event Handlers
         private void DisplayOptionsDlg_Load(object sender, EventArgs e)
         {
             // This is a weird initialization because of the constraint that the
@@ -141,7 +148,9 @@ namespace SetGame
 
             _shapePreview3.Invalidate();
         }
+        #endregion
 
+        #region Private Helpers
         private void loadCombo(ComboBox cbo, Shapes val, params Shapes[] except)
         {
             bool init = _initializing;
@@ -180,6 +189,7 @@ namespace SetGame
 
             g.DrawPolygon(new Pen(Color.Black, 2f), CardRenderer.GetPolygon(shape));
         }
+        #endregion
     }
 
     static partial class Extensions
