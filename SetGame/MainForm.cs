@@ -11,54 +11,69 @@ namespace SetGame
 {
     public partial class MainForm : Form
     {
-        private Game _game = new Game(1);
+        private Game _game = new Game();
         private CardRenderer _renderer = new CardRenderer(Shapes.Pill, Shapes.Diamond, Shapes.ZigZag, Color.Red, Color.Green, Color.Purple);
+        private bool _inSet = false;
 
         public MainForm()
         {
             InitializeComponent();
+
+            _game.BoardModified += new Action(_game_BoardModified);
+            _game.BeginSet += new Action<int>(_game_BeginSet);
+            _game.EndSet += new Action(_game_EndSet);
+            _game.ScoresChanged += new Action(_game_ScoresChanged);
+            _game.PlayersChanged += new Action(_game_PlayersChanged);
+            _game.ShotClockTick += new Action<int>(_game_ShotClockTick);
+            _game.GameOver += new Action(_game_GameOver);
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        void _game_GameOver()
         {
-            deal(12);
+            button1.Enabled = button2.Enabled = false;
+            label1.Text = label2.Text = label3.Text = "";
         }
 
-        void cardPanel_Click(object sender, EventArgs e)
+        void _game_ShotClockTick(int count)
         {
-            CardPanel cardPanel = sender as CardPanel;
-            if (cardPanel == null)
-                return;
-
-            cardPanel.Selected = !cardPanel.Selected;
-
-            var selected = CardPanels.Where(cp => cp.Selected).ToList();
-            if (selected.Count == 3)
-            {
-                if (!_game.Validate(selected[0].Card, selected[1].Card, selected[2].Card))
-                {
-                    foreach (var cp in selected)
-                        cp.Selected = false;
-
-                    _game.PenalizePlayer(0);
-                }
-                else
-                {
-                    foreach (var cp in selected)
-                        flowLayoutPanel1.Controls.Remove(cp);
-                    _game.IncrementScore(0);
-
-                    if (flowLayoutPanel1.Controls.Count < 12)
-                        deal(3);
-                    else
-                        checkOptions();
-                }
-            }
+            label3.Text = count.ToString();
         }
 
-        void deal(int n)
+        void _game_PlayersChanged()
         {
-            flowLayoutPanel1.Controls.AddRange(_game.Deal(n)
+            printScores();
+        }
+
+        void _game_ScoresChanged()
+        {
+            printScores();
+        }
+
+        private void printScores()
+        {
+            label2.Text = string.Format("{0}: {1}", _game.Names[0], _game.Scores[0]);
+        }
+
+        void _game_EndSet()
+        {
+            _inSet = false;
+            label3.Text = "";
+            foreach (var cp in CardPanels)
+                cp.Selected = false;
+            panel1.BackColor = Control.DefaultBackColor;
+        }
+
+        void _game_BeginSet(int obj)
+        {
+            _inSet = true;
+        }
+
+        void _game_BoardModified()
+        {
+            button1.Enabled = false;
+            button2.Enabled = false;
+            flowLayoutPanel1.Controls.Clear();
+            flowLayoutPanel1.Controls.AddRange(_game.Board
                 .Select(c =>
                 {
                     var cardPanel = new CardPanel(c)
@@ -70,8 +85,27 @@ namespace SetGame
                     cardPanel.Click += new EventHandler(cardPanel_Click);
                     return cardPanel;
                 }).ToArray());
+            button1.Enabled = true;
+            button2.Enabled = true;
+        }
 
-            checkOptions();
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+        }
+
+        void cardPanel_Click(object sender, EventArgs e)
+        {
+            CardPanel cardPanel = sender as CardPanel;
+            if (!_inSet || cardPanel == null)
+                return;
+
+            cardPanel.Selected = !cardPanel.Selected;
+
+            var selected = CardPanels.Where(cp => cp.Selected).ToList();
+            if (selected.Count == 3)
+            {
+                _game.MakePlay(0, selected[0].Card, selected[1].Card, selected[2].Card);
+            }
         }
 
         IEnumerable<CardPanel> CardPanels
@@ -90,17 +124,6 @@ namespace SetGame
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            deal(3);
-        }
-
-        private void checkOptions()
-        {
-            var choices = _game.GetOptions(Cards);
-            label1.Text = choices.Count > 0 ? "" : "No moves.";
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
             var choices = _game.GetOptions(Cards);
@@ -113,6 +136,7 @@ namespace SetGame
                 var panel = CardPanels.Where(cp => choices.Contains(cp.Card)).OrderBy(cp => rand.Next()).First();
                 panel.Selected = true;
             }
+            this.Focus();
         }
 
         private void displayToolStripMenuItem_Click(object sender, EventArgs e)
@@ -122,6 +146,38 @@ namespace SetGame
             {
                 Invalidate(true);
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            callSet();
+            this.Focus();
+        }
+
+        private void newSinglePlayerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_game.Active)
+                _game.EndGame();
+
+            _game.AddPlayer(new Player("Player 1"));
+            _game.BeginGame();
+        }
+
+        private void callSet()
+        {
+            panel1.BackColor = Color.Orange;
+            _game.Reserve(0);
+        }
+
+        private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar.ToString().ToLower() == "s")
+                callSet();
+        }
+
+        private void button_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            OnKeyPress(e);
         }
     }
 }

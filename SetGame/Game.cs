@@ -2,19 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace SetGame
 {
     class Game
     {
-        private List<Card> _deck;
-        private List<HashSet<Card>> _sets = new List<HashSet<Card>>();
-        private int[] _scores;
+        private const int ShotClockLimit = 5;
 
-        public Game(int playerCount)
+        private List<Card> _deck;
+        private List<Card> _board = new List<Card>();
+        private List<HashSet<Card>> _sets = new List<HashSet<Card>>();
+        private List<Player> _players = new List<Player>();
+        private bool _started = false;
+        private int _reservation = -1;
+        private Timer _timer = new Timer();
+        private int _shotClock;
+
+        public Game()
         {
-            Random rand = new Random();
-            _deck = Card.GenerateDeck().OrderBy(c => rand.Next()).ToList();
+            initDeck();
 
             _sets.Add(new HashSet<Card>(_deck.Where(c => c.Colour == Colours.Second)));
             _sets.Add(new HashSet<Card>(_deck.Where(c => c.Colour == Colours.Third)));
@@ -32,7 +39,83 @@ namespace SetGame
             _sets.Add(new HashSet<Card>(_deck.Where(c => c.Number == Numbers.Two)));
             _sets.Add(new HashSet<Card>(_deck.Where(c => c.Number == Numbers.Three)));
 
-            _scores = new int[playerCount];
+            _timer.Interval = 1000;
+            _timer.Tick += new EventHandler(_timer_Tick);
+        }
+
+        public event Action BoardModified = () => { };
+        public event Action ScoresChanged = () => { };
+        public event Action PlayersChanged = () => { };
+        public event Action<int> BeginSet = (p) => { };
+        public event Action<int> ShotClockTick = (i) => { };
+        public event Action EndSet = () => { };
+        public event Action GameOver = () => { };
+
+        public bool Active
+        {
+            get { return _started; }
+        }
+        
+        public int PlayerCount
+        {
+            get { return _players.Count; }
+        }
+
+        public string[] Names
+        {
+            get { return _players.Select(p => p.Name).ToArray(); }
+        }
+
+        public int[] Scores
+        {
+            get { return _players.Select(p => p.Score).ToArray(); }
+        }
+
+        public IEnumerable<Card> Board
+        {
+            get { return _board; }
+        }
+
+        public void AddPlayer(Player player)
+        {
+            if (_started)
+                return;
+
+            _players.Add(player);
+            PlayersChanged();
+        }
+
+        public void BeginGame()
+        {
+            if (_started || _players.Count == 0)
+                return;
+
+            _started = true;
+            initDeck();
+            replenishBoard();
+        }
+
+        public void EndGame()
+        {
+            if (!_started)
+                return;
+
+            _board.Clear();
+            _players.Clear();
+            GameOver();
+        }
+
+        public void Reserve(int player)
+        {
+            if (_started && _reservation < 0)
+            {
+                _reservation = player;
+                _shotClock = ShotClockLimit;
+
+                BeginSet(_reservation);
+                ShotClockTick(_shotClock);
+                _timer.Start();
+            }
         }
 
         public List<Card> Deal(int n)
@@ -40,20 +123,66 @@ namespace SetGame
             var result = _deck.Take(n).ToList();
             if (result.Count > 0)
                 _deck.RemoveRange(0, result.Count);
+
+            _board.AddRange(result);
+            BoardModified();
+
             return result;
         }
 
-        public bool Validate(Card c1, Card c2, Card c3)
+        public bool MakePlay(int player, Card c1, Card c2, Card c3)
         {
+            if (_reservation < 0)
+                return false;
+            _timer.Stop();
+            _reservation = -1;
+            EndSet();
+
             HashSet<Card> choice = new HashSet<Card>(new[] { c1, c2, c3 });
-            return validate(choice);
+            if (validate(choice))
+            {
+                _board.RemoveAll(c => choice.Contains(c));
+                replenishBoard();
+
+                IncrementScore(player);
+
+                if (_deck.Count == 0 && GetOptions(_board).Count == 0)
+                    EndGame();
+                return true;
+            }
+            else
+            {
+                PenalizePlayer(player);
+                return false;
+            }
+        }
+
+        private void _timer_Tick(object sender, EventArgs e)
+        {
+            _timer.Stop();
+
+            if (_reservation >= 0)
+            {
+                if (--_shotClock == 0)
+                {
+                    PenalizePlayer(_reservation);
+                    EndSet();
+                    _reservation = -1;
+                }
+                else
+                {
+                    ShotClockTick(_shotClock);
+                    _timer.Start();
+                }
+            }
         }
 
         private bool validate(HashSet<Card> choice)
         {
             if (choice.Count != 3)
                 return false;
-            return !_sets.Select(s => s.Intersect(choice).Count()).Contains(2);
+            var list = _sets.Select(s => s.Intersect(choice).Count()).ToList();
+            return !list.Contains(2);
         }
 
         public HashSet<Card> GetOptions(IEnumerable<Card> set)
@@ -64,17 +193,28 @@ namespace SetGame
 
         public void IncrementScore(int player)
         {
-            _scores[player] += 3;
+            _players[player].Score += 3;
+            ScoresChanged();
         }
 
         public void PenalizePlayer(int player)
         {
-            _scores[player]--;
+            _players[player].Score--;
+            ScoresChanged();
         }
 
-        public int[] Scores
+        private void initDeck()
         {
-            get { return _scores; }
+            Random rand = new Random();
+            _deck = Card.GenerateDeck().OrderBy(c => rand.Next()).ToList();
+        }
+
+        private void replenishBoard()
+        {
+            while (_deck.Count > 0 && (_board.Count < 12 || GetOptions(_board).Count == 0))
+            {
+                Deal(3);
+            }
         }
     }
 

@@ -69,6 +69,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Numbers.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="PropertyTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

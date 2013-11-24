@@ -62,9 +62,24 @@ namespace SetGame
             get { return _properties; }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is Card)
+            {
+                Card other = (Card)obj;
+                return GetHashCode() == other.GetHashCode();
+            }
+            return false;
+        }
+        
         public override int GetHashCode()
         {
             return _properties.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}{1}{2}{3}", (int)Colour, (int)Shade, (int)Shape, (int)Number);
         }
     }
 }
