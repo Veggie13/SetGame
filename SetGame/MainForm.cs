@@ -32,6 +32,7 @@ namespace SetGame
         {
             button1.Enabled = button2.Enabled = false;
             label1.Text = label2.Text = label3.Text = "";
+            flowLayoutPanel1.Controls.Clear();
         }
 
         void _game_ShotClockTick(int count)
@@ -171,7 +172,7 @@ namespace SetGame
 
         private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar.ToString().ToLower() == "s")
+            if (_game.Active && !_inSet && e.KeyChar.ToString().ToLower() == "s")
                 callSet();
         }
 
