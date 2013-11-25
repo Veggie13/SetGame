@@ -1,6 +1,6 @@
 ﻿namespace SetGame
 {
-    enum Numbers
+    public enum Numbers
     {
         One = 1,
         Two,

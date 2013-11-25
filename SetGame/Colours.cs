@@ -1,6 +1,6 @@
 ﻿namespace SetGame
 {
-    enum Colours
+    public enum Colours
     {
         First = 1,
         Second,

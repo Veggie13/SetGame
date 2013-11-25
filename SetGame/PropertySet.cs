@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SetGame
 {
-    class PropertySet
+    public class PropertySet
     {
         private Dictionary<PropertyTypes, int> _valueMap = new Dictionary<PropertyTypes, int>();
 

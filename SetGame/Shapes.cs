@@ -1,13 +1,13 @@
 ﻿namespace SetGame
 {
-    enum ShapeID
+    public enum ShapeID
     {
         Alpha = 1,
         Beta,
         Gamma
     }
 
-    enum Shapes
+    public enum Shapes
     {
         Pill,
         Diamond,

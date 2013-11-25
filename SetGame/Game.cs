@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace SetGame
 {
-    class Game
+    public class Game
     {
         private const int ShotClockLimit = 5;
 
@@ -94,7 +94,7 @@ namespace SetGame
 
         public void BeginGame()
         {
-            if (_started || _players.Count == 0)
+            if (_started || _players.Count < 0)
                 return;
 
             _started = true;
@@ -182,16 +182,41 @@ namespace SetGame
         #endregion
 
         #region Private Helpers
-        private List<Card> deal(int n)
+        internal void DebugBeginGame(string colours, string shades, string shapes, string numbers)
+        {
+            if (_started || _players.Count < 0)
+                return;
+
+            Card[] startingBoard = new Card[colours.Length];
+            for (int i = 0; i < colours.Length; i++)
+            {
+                startingBoard[i] = new Card(string.Format("{0}{1}{2}{3}", colours[i], shades[i], shapes[i], numbers[i]));
+            }
+
+            _started = true;
+            initDeck();
+
+            HashSet<Card> lookup = new HashSet<Card>(startingBoard);
+            int removed = _deck.RemoveAll(c => lookup.Contains(c));
+            deal(startingBoard, true);
+        }
+
+        private List<Card> deal(int n, bool signal = true)
         {
             var result = _deck.Take(n).ToList();
             if (result.Count > 0)
                 _deck.RemoveRange(0, result.Count);
 
-            _board.AddRange(result);
-            BoardModified();
+            deal(result, signal);
 
             return result;
+        }
+
+        private void deal(IEnumerable<Card> cards, bool signal)
+        {
+            _board.AddRange(cards);
+            if (signal)
+                BoardModified();
         }
 
         private bool validate(HashSet<Card> choice)
@@ -224,8 +249,9 @@ namespace SetGame
         {
             while (_deck.Count > 0 && (_board.Count < 12 || GetOptions(_board).Count == 0))
             {
-                deal(3);
+                deal(3, false);
             }
+            BoardModified();
         }
         #endregion
     }

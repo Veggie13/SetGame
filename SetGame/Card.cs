@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SetGame
 {
-    class Card
+    public class Card
     {
         #region Class Members
         private PropertySet _properties;
@@ -18,6 +18,15 @@ namespace SetGame
                 (int)PropertyTypes.Shade, (int)shade,
                 (int)PropertyTypes.Shape, (int)shape,
                 (int)PropertyTypes.Number, (int)number);
+        }
+
+        internal Card(string code)
+        {
+            _properties = new PropertySet(
+                (int)PropertyTypes.Colour, (int)(code[0] - '0'),
+                (int)PropertyTypes.Shade, (int)(code[1] - '0'),
+                (int)PropertyTypes.Shape, (int)(code[2] - '0'),
+                (int)PropertyTypes.Number, (int)(code[3] - '0'));
         }
 
         public static List<Card> GenerateDeck()

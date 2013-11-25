@@ -1,6 +1,6 @@
 ﻿namespace SetGame
 {
-    enum Shades
+    public enum Shades
     {
         Solid = 1,
         Half,

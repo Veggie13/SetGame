@@ -1,6 +1,6 @@
 ﻿namespace SetGame
 {
-    enum PropertyTypes
+    public enum PropertyTypes
     {
         Colour,
         Shade,
