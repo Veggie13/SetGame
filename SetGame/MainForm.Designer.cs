@@ -74,7 +74,6 @@
             this.button2.Text = "Hint";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
-            this.button2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.button_KeyPress);
             // 
             // menuStrip1
             // 
@@ -129,7 +128,6 @@
             this.button1.Text = "SET";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            this.button1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.button_KeyPress);
             // 
             // label2
             // 
@@ -169,6 +167,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

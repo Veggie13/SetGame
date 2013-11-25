@@ -28,6 +28,8 @@ namespace SetGame
             _game.PlayersChanged += new Action(_game_PlayersChanged);
             _game.ShotClockTick += new Action<int>(_game_ShotClockTick);
             _game.GameOver += new Action(_game_GameOver);
+
+            setupKeyEvents(this);
         }
 
         #region Properties
@@ -57,12 +59,10 @@ namespace SetGame
         private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (_game.Active && !_inSet && e.KeyChar.ToString().ToLower() == "s")
+            {
                 callSet();
-        }
-
-        private void button_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            OnKeyPress(e);
+                e.Handled = true;
+            }
         }
         #endregion
 
@@ -96,6 +96,7 @@ namespace SetGame
             foreach (var cp in CardPanels)
                 cp.Selected = false;
             panel1.BackColor = Control.DefaultBackColor;
+            panel1.Focus();
         }
 
         private void _game_BeginSet(int obj)
@@ -194,6 +195,16 @@ namespace SetGame
         {
             panel1.BackColor = Color.Orange;
             _game.Reserve(0);
+        }
+
+        private void setupKeyEvents(Control c)
+        {
+            foreach (Control child in c.Controls)
+            {
+                setupKeyEvents(child);
+            }
+
+            c.KeyPress += new KeyPressEventHandler(MainForm_KeyPress);
         }
         #endregion
     }
