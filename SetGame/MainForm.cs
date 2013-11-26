@@ -37,7 +37,7 @@ namespace SetGame
         {
             get
             {
-                return flowLayoutPanel1.Controls.OfType<CardPanel>();
+                return _flowBoard.Controls.OfType<CardPanel>();
             }
         }
 
@@ -69,14 +69,14 @@ namespace SetGame
         #region Game
         private void _game_GameOver()
         {
-            button1.Enabled = button2.Enabled = false;
-            label1.Text = label2.Text = label3.Text = "";
-            flowLayoutPanel1.Controls.Clear();
+            _btnSet.Enabled = _btnHint.Enabled = false;
+            _lblMessages.Text = _lblScore.Text = _lblCountdown.Text = "";
+            _flowBoard.Controls.Clear();
         }
 
         private void _game_ShotClockTick(int count)
         {
-            label3.Text = count.ToString();
+            _lblCountdown.Text = count.ToString();
         }
 
         private void _game_PlayersChanged()
@@ -92,11 +92,11 @@ namespace SetGame
         private void _game_EndSet()
         {
             _inSet = false;
-            label3.Text = "";
+            _lblCountdown.Text = "";
             foreach (var cp in CardPanels)
                 cp.Selected = false;
-            panel1.BackColor = Control.DefaultBackColor;
-            panel1.Focus();
+            _pnlBoard.BackColor = Control.DefaultBackColor;
+            _pnlBoard.Focus();
         }
 
         private void _game_BeginSet(int obj)
@@ -106,23 +106,23 @@ namespace SetGame
 
         private void _game_BoardModified()
         {
-            button1.Enabled = false;
-            button2.Enabled = false;
-            flowLayoutPanel1.Controls.Clear();
-            flowLayoutPanel1.Controls.AddRange(_game.Board
+            _btnSet.Enabled = false;
+            _btnHint.Enabled = false;
+            _flowBoard.Controls.Clear();
+            _flowBoard.Controls.AddRange(_game.Board
                 .Select(c =>
                 {
                     var cardPanel = new CardPanel(c)
                     {
-                        Width = flowLayoutPanel1.Width / 3 - 20,
-                        Height = flowLayoutPanel1.Height / 5 - 20,
+                        Width = _flowBoard.Width / 3 - 20,
+                        Height = _flowBoard.Height / 5 - 20,
                         Renderer = _renderer
                     };
                     cardPanel.Click += new EventHandler(cardPanel_Click);
                     return cardPanel;
                 }).ToArray());
-            button1.Enabled = true;
-            button2.Enabled = true;
+            _btnSet.Enabled = true;
+            _btnHint.Enabled = true;
         }
         #endregion
 
@@ -142,13 +142,13 @@ namespace SetGame
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void _btnSet_Click(object sender, EventArgs e)
         {
             callSet();
             this.Focus();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void _btnHint_Click(object sender, EventArgs e)
         {
             var choices = _game.GetOptions(Cards);
             if (choices.Count > 0)
@@ -165,7 +165,7 @@ namespace SetGame
         #endregion
 
         #region Menu Items
-        private void displayToolStripMenuItem_Click(object sender, EventArgs e)
+        private void _itmOptionsDisplay_Click(object sender, EventArgs e)
         {
             var dlg = new DisplayOptionsDlg(_renderer);
             if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -174,7 +174,7 @@ namespace SetGame
             }
         }
 
-        private void newSinglePlayerToolStripMenuItem_Click(object sender, EventArgs e)
+        private void _itmGameNewSingle_Click(object sender, EventArgs e)
         {
             if (_game.Active)
                 _game.EndGame();
@@ -188,12 +188,12 @@ namespace SetGame
         #region Private Helpers
         private void printScores()
         {
-            label2.Text = string.Format("{0}: {1}", _game.Names[0], _game.Scores[0]);
+            _lblScore.Text = string.Format("{0}: {1}", _game.Names[0], _game.Scores[0]);
         }
 
         private void callSet()
         {
-            panel1.BackColor = Color.Orange;
+            _pnlBoard.BackColor = Color.Orange;
             _game.Reserve(0);
         }
 
