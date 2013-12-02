@@ -94,7 +94,7 @@ namespace SetGame
 
         public void BeginGame()
         {
-            if (_started || _players.Count < 0)
+            if (_started || _players.Count < 1)
                 return;
 
             _started = true;
@@ -107,9 +107,10 @@ namespace SetGame
             if (!_started)
                 return;
 
+            _started = false;
+            GameOver();
             _board.Clear();
             _players.Clear();
-            GameOver();
         }
 
         public void Reserve(int player)
@@ -182,9 +183,9 @@ namespace SetGame
         #endregion
 
         #region Private Helpers
-        internal void DebugBeginGame(string colours, string shades, string shapes, string numbers)
+        internal void DebugBeginGame(string colours, string shades, string shapes, string numbers, IEnumerable<Card> deck = null)
         {
-            if (_started || _players.Count < 0)
+            if (_started || _players.Count < 1)
                 return;
 
             Card[] startingBoard = new Card[colours.Length];
@@ -194,7 +195,13 @@ namespace SetGame
             }
 
             _started = true;
-            initDeck();
+            if (deck == null)
+                initDeck();
+            else
+            {
+                _deck.Clear();
+                _deck.AddRange(deck);
+            }
 
             HashSet<Card> lookup = new HashSet<Card>(startingBoard);
             int removed = _deck.RemoveAll(c => lookup.Contains(c));

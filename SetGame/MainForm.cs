@@ -72,6 +72,22 @@ namespace SetGame
             _btnSet.Enabled = _btnHint.Enabled = false;
             _lblMessages.Text = _lblScore.Text = _lblCountdown.Text = "";
             _flowBoard.Controls.Clear();
+
+            Label message = new Label();
+            message.Size = _flowBoard.Size;
+            message.Font = new Font("Arial", 30f, FontStyle.Bold);
+            message.ForeColor = Color.Red;
+            message.TextAlign = ContentAlignment.MiddleCenter;
+
+            message.Text = "GAME OVER\r\nNo sets remain\r\n";
+            foreach (var player in Enumerable.Range(0, _game.PlayerCount)
+                .Select(i => new Tuple<string, int>(_game.Names[i], _game.Scores[i]))
+                .OrderByDescending(p => p.Item2))
+            {
+                message.Text += string.Format("\r\n{0}: {1}", player.Item1, player.Item2);
+            }
+
+            _flowBoard.Controls.Add(message);
         }
 
         private void _game_ShotClockTick(int count)
@@ -179,7 +195,7 @@ namespace SetGame
             if (_game.Active)
                 _game.EndGame();
 
-            _game.AddPlayer(new Player("Player 1"));
+            _game.AddPlayer(new Player("Score"));
             _game.BeginGame();
         }
         #endregion
