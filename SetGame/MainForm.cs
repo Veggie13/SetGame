@@ -134,7 +134,7 @@ namespace SetGame
                         Height = _flowBoard.Height / 5 - 20,
                         Renderer = _renderer
                     };
-                    cardPanel.Click += new EventHandler(cardPanel_Click);
+                    cardPanel.MouseClick += new MouseEventHandler(cardPanel_MouseClick);
                     return cardPanel;
                 }).ToArray());
             _btnSet.Enabled = true;
@@ -143,8 +143,14 @@ namespace SetGame
         #endregion
 
         #region Controls
-        private void cardPanel_Click(object sender, EventArgs e)
+        private void cardPanel_MouseClick(object sender, MouseEventArgs e)
         {
+            if (!_inSet && e.Button == MouseButtons.Right)
+            {
+                callSet();
+                this.Focus();
+            }
+
             CardPanel cardPanel = sender as CardPanel;
             if (!_inSet || cardPanel == null)
                 return;
