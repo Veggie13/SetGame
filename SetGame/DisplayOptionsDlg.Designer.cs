@@ -330,6 +330,7 @@
             this.Name = "DisplayOptionsDlg";
             this.Padding = new System.Windows.Forms.Padding(5);
             this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Display Options";
