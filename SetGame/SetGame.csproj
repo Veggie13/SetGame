@@ -55,6 +55,13 @@
     </Compile>
     <Compile Include="CardRenderer.cs" />
     <Compile Include="Colours.cs" />
+    <Compile Include="ControlHandler.cs" />
+    <Compile Include="ControlOptionsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ControlOptionsDlg.Designer.cs">
+      <DependentUpon>ControlOptionsDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="DisplayOptionsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -76,6 +83,9 @@
     <Compile Include="PropertySet.cs" />
     <Compile Include="Shades.cs" />
     <Compile Include="Shapes.cs" />
+    <EmbeddedResource Include="ControlOptionsDlg.resx">
+      <DependentUpon>ControlOptionsDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DisplayOptionsDlg.resx">
       <DependentUpon>DisplayOptionsDlg.cs</DependentUpon>
     </EmbeddedResource>

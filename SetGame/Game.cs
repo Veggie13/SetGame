@@ -49,9 +49,10 @@ namespace SetGame
         public event Action BoardModified = () => { };
         public event Action ScoresChanged = () => { };
         public event Action PlayersChanged = () => { };
-        public event Action<int> BeginSet = (p) => { };
+        public event Action<Player> BeginSet = (p) => { };
         public event Action<int> ShotClockTick = (i) => { };
-        public event Action EndSet = () => { };
+        public event Action<Card, Card, Card> SuccessfulSet = delegate { };
+        public event Action FailedSet = () => { };
         public event Action GameOver = () => { };
         #endregion
 
@@ -89,6 +90,19 @@ namespace SetGame
                 return;
 
             _players.Add(player);
+            player.SetRequested += new Action<Player>(player_SetRequested);
+
+            PlayersChanged();
+        }
+
+        public void RemovePlayer(Player player)
+        {
+            if (_started)
+                return;
+
+            _players.Remove(player);
+            player.SetRequested -= player_SetRequested;
+
             PlayersChanged();
         }
 
@@ -113,36 +127,25 @@ namespace SetGame
             _players.Clear();
         }
 
-        public void Reserve(int player)
-        {
-            if (_started && _reservation < 0)
-            {
-                _reservation = player;
-                _shotClock = ShotClockLimit;
-
-                BeginSet(_reservation);
-                ShotClockTick(_shotClock);
-                _timer.Start();
-            }
-        }
-
         public HashSet<Card> GetOptions(IEnumerable<Card> set)
         {
             return set.PowerSet(3, 3).Where(s => validate(s))
                 .Aggregate(new HashSet<Card>(), (a, s) => { a.UnionWith(s); return a; });
         }
 
-        public bool MakePlay(int player, Card c1, Card c2, Card c3)
+        public bool MakePlay(Card c1, Card c2, Card c3)
         {
             if (_reservation < 0)
                 return false;
             _timer.Stop();
+            int player = _reservation;
             _reservation = -1;
-            EndSet();
 
             HashSet<Card> choice = new HashSet<Card>(new[] { c1, c2, c3 });
             if (validate(choice))
             {
+                SuccessfulSet(c1, c2, c3);
+
                 _board.RemoveAll(c => choice.Contains(c));
                 replenishBoard();
 
@@ -154,6 +157,7 @@ namespace SetGame
             }
             else
             {
+                FailedSet();
                 penalizePlayer(player);
                 return false;
             }
@@ -170,7 +174,7 @@ namespace SetGame
                 if (--_shotClock == 0)
                 {
                     penalizePlayer(_reservation);
-                    EndSet();
+                    FailedSet();
                     _reservation = -1;
                 }
                 else
@@ -178,6 +182,14 @@ namespace SetGame
                     ShotClockTick(_shotClock);
                     _timer.Start();
                 }
+            }
+        }
+
+        private void player_SetRequested(Player player)
+        {
+            if (_players.Contains(player))
+            {
+                reserve(_players.IndexOf(player));
             }
         }
         #endregion
@@ -259,6 +271,19 @@ namespace SetGame
                 deal(3, false);
             }
             BoardModified();
+        }
+
+        private void reserve(int player)
+        {
+            if (_started && _reservation < 0)
+            {
+                _reservation = player;
+                _shotClock = ShotClockLimit;
+
+                BeginSet(_players[_reservation]);
+                ShotClockTick(_shotClock);
+                _timer.Start();
+            }
         }
         #endregion
     }

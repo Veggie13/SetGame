@@ -6,24 +6,35 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace SetGame
 {
-    public partial class MainForm : Form
+    public partial class MainForm : Form, LocalControlHandler.IControlProvider
     {
         #region Class Members
         private Game _game = new Game();
         private CardRenderer _renderer = new CardRenderer(Shapes.Pill, Shapes.Diamond, Shapes.ZigZag, Color.Red, Color.Green, Color.Purple);
         private bool _inSet = false;
+        private HashSet<Player> _localPlayers = new HashSet<Player>();
+        private LocalControlHandler _singleHandler;
         #endregion
 
         public MainForm()
         {
             InitializeComponent();
 
+            _singleHandler = new LocalControlHandler(this)
+                {
+                    UseSetButton = true,
+                    UseRightMouseButton = true,
+                    Key = 'S'
+                };
+
             _game.BoardModified += new Action(_game_BoardModified);
-            _game.BeginSet += new Action<int>(_game_BeginSet);
-            _game.EndSet += new Action(_game_EndSet);
+            _game.BeginSet += new Action<Player>(_game_BeginSet);
+            _game.SuccessfulSet += new Action<Card, Card, Card>(_game_SuccessfulSet);
+            _game.FailedSet += new Action(_game_FailedSet);
             _game.ScoresChanged += new Action(_game_ScoresChanged);
             _game.PlayersChanged += new Action(_game_PlayersChanged);
             _game.ShotClockTick += new Action<int>(_game_ShotClockTick);
@@ -50,6 +61,14 @@ namespace SetGame
         }
         #endregion
 
+        #region IControlProvider
+        public event Action SetRequestClicked = delegate { };
+
+        public event Action RightMouseClicked = delegate { };
+
+        public event Action<char> KeyPressed = delegate { };
+        #endregion
+
         #region Event Handlers
         #region MainForm
         private void MainForm_Load(object sender, EventArgs e)
@@ -58,11 +77,8 @@ namespace SetGame
 
         private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (_game.Active && !_inSet && e.KeyChar.ToString().ToLower() == "s")
-            {
-                callSet();
-                e.Handled = true;
-            }
+            KeyPressed(e.KeyChar);
+            e.Handled = true;
         }
         #endregion
 
@@ -105,19 +121,40 @@ namespace SetGame
             printScores();
         }
 
-        private void _game_EndSet()
+        private void _game_SuccessfulSet(Card card1, Card card2, Card card3)
         {
-            _inSet = false;
-            _lblCountdown.Text = "";
-            foreach (var cp in CardPanels)
-                cp.Selected = false;
-            _pnlBoard.BackColor = Control.DefaultBackColor;
-            _pnlBoard.Focus();
+            foreach (CardPanel cp in _flowBoard.Controls)
+            {
+                cp.Selected = (cp.Card.Equals(card1) || cp.Card.Equals(card2) || cp.Card.Equals(card3));
+            }
+
+            // Take a moment to bask in the set you've chosen...
+            Application.DoEvents();
+            Thread.Sleep(1000);
+
+            finishInSet();
         }
 
-        private void _game_BeginSet(int obj)
+        private void _game_FailedSet()
         {
-            _inSet = true;
+            finishInSet();
+        }
+
+        private void _game_BeginSet(Player player)
+        {
+            if (_localPlayers.Contains(player))
+            {
+                _inSet = true;
+                _pnlBoard.BackColor = Color.Orange;
+            }
+            else
+            {
+                _pnlBoard.BackColor = Color.Red;
+            }
+
+            _btnSet.Enabled = false;
+            _btnHint.Enabled = false;
+            this.Focus();
         }
 
         private void _game_BoardModified()
@@ -145,10 +182,9 @@ namespace SetGame
         #region Controls
         private void cardPanel_MouseClick(object sender, MouseEventArgs e)
         {
-            if (!_inSet && e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
-                callSet();
-                this.Focus();
+                RightMouseClicked();
             }
 
             CardPanel cardPanel = sender as CardPanel;
@@ -160,14 +196,13 @@ namespace SetGame
             var selected = CardPanels.Where(cp => cp.Selected).ToList();
             if (selected.Count == 3)
             {
-                _game.MakePlay(0, selected[0].Card, selected[1].Card, selected[2].Card);
+                _game.MakePlay(selected[0].Card, selected[1].Card, selected[2].Card);
             }
         }
 
         private void _btnSet_Click(object sender, EventArgs e)
         {
-            callSet();
-            this.Focus();
+            SetRequestClicked();
         }
 
         private void _btnHint_Click(object sender, EventArgs e)
@@ -196,12 +231,24 @@ namespace SetGame
             }
         }
 
+        private void _itmOptionsControls_Click(object sender, EventArgs e)
+        {
+            var dlg = new ControlOptionsDlg(_singleHandler);
+            dlg.ShowDialog(this);
+        }
+
         private void _itmGameNewSingle_Click(object sender, EventArgs e)
         {
             if (_game.Active)
-                _game.EndGame();
+                finishGame();
 
-            _game.AddPlayer(new Player("Score"));
+            _localPlayers.Add(new Player("Score")
+                {
+                    ControlHandler = _singleHandler
+                });
+
+            foreach (Player p in _localPlayers)
+                _game.AddPlayer(p);
             _game.BeginGame();
         }
         #endregion
@@ -213,12 +260,6 @@ namespace SetGame
             _lblScore.Text = string.Format("{0}: {1}", _game.Names[0], _game.Scores[0]);
         }
 
-        private void callSet()
-        {
-            _pnlBoard.BackColor = Color.Orange;
-            _game.Reserve(0);
-        }
-
         private void setupKeyEvents(Control c)
         {
             foreach (Control child in c.Controls)
@@ -227,6 +268,26 @@ namespace SetGame
             }
 
             c.KeyPress += new KeyPressEventHandler(MainForm_KeyPress);
+        }
+
+        private void finishInSet()
+        {
+            _inSet = false;
+            _lblCountdown.Text = "";
+            foreach (var cp in CardPanels)
+                cp.Selected = false;
+            _pnlBoard.BackColor = Control.DefaultBackColor;
+            _pnlBoard.Focus();
+            _btnSet.Enabled = true;
+            _btnHint.Enabled = true;
+        }
+
+        private void finishGame()
+        {
+            _game.EndGame();
+            foreach (Player p in _localPlayers)
+                p.Dispose();
+            _localPlayers.Clear();
         }
         #endregion
     }

@@ -41,118 +41,128 @@
             this._lblScore = new System.Windows.Forms.Label();
             this._lblCountdown = new System.Windows.Forms.Label();
             this._pnlBoard = new System.Windows.Forms.Panel();
+            this._itmOptionsControls = new System.Windows.Forms.ToolStripMenuItem();
             this._mnuMain.SuspendLayout();
             this._pnlBoard.SuspendLayout();
             this.SuspendLayout();
             // 
-            // flowLayoutPanel1
+            // _flowBoard
             // 
             this._flowBoard.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this._flowBoard.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this._flowBoard.Dock = System.Windows.Forms.DockStyle.Fill;
             this._flowBoard.Location = new System.Drawing.Point(2, 2);
-            this._flowBoard.Name = "flowLayoutPanel1";
+            this._flowBoard.Name = "_flowBoard";
             this._flowBoard.Size = new System.Drawing.Size(561, 764);
             this._flowBoard.TabIndex = 0;
             // 
-            // label1
+            // _lblMessages
             // 
             this._lblMessages.AutoSize = true;
             this._lblMessages.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this._lblMessages.Location = new System.Drawing.Point(12, 801);
-            this._lblMessages.Name = "label1";
+            this._lblMessages.Name = "_lblMessages";
             this._lblMessages.Size = new System.Drawing.Size(0, 20);
             this._lblMessages.TabIndex = 2;
             // 
-            // button2
+            // _btnHint
             // 
             this._btnHint.Enabled = false;
             this._btnHint.Location = new System.Drawing.Point(330, 801);
-            this._btnHint.Name = "button2";
+            this._btnHint.Name = "_btnHint";
             this._btnHint.Size = new System.Drawing.Size(75, 23);
             this._btnHint.TabIndex = 3;
             this._btnHint.Text = "Hint";
             this._btnHint.UseVisualStyleBackColor = true;
             this._btnHint.Click += new System.EventHandler(this._btnHint_Click);
             // 
-            // menuStrip1
+            // _mnuMain
             // 
             this._mnuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._mnuGame,
             this._mnuOptions});
             this._mnuMain.Location = new System.Drawing.Point(0, 0);
-            this._mnuMain.Name = "menuStrip1";
+            this._mnuMain.Name = "_mnuMain";
             this._mnuMain.Size = new System.Drawing.Size(593, 24);
             this._mnuMain.TabIndex = 4;
             this._mnuMain.Text = "menuStrip1";
             // 
-            // gameToolStripMenuItem
+            // _mnuGame
             // 
             this._mnuGame.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._itmGameNewSingle});
-            this._mnuGame.Name = "gameToolStripMenuItem";
+            this._mnuGame.Name = "_mnuGame";
             this._mnuGame.Size = new System.Drawing.Size(50, 20);
             this._mnuGame.Text = "&Game";
             // 
-            // newSinglePlayerToolStripMenuItem
+            // _itmGameNewSingle
             // 
-            this._itmGameNewSingle.Name = "newSinglePlayerToolStripMenuItem";
+            this._itmGameNewSingle.Name = "_itmGameNewSingle";
             this._itmGameNewSingle.ShortcutKeys = System.Windows.Forms.Keys.F2;
             this._itmGameNewSingle.Size = new System.Drawing.Size(187, 22);
             this._itmGameNewSingle.Text = "New Single Player";
             this._itmGameNewSingle.Click += new System.EventHandler(this._itmGameNewSingle_Click);
             // 
-            // optionsToolStripMenuItem
+            // _mnuOptions
             // 
             this._mnuOptions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._itmOptionsDisplay});
-            this._mnuOptions.Name = "optionsToolStripMenuItem";
+            this._itmOptionsDisplay,
+            this._itmOptionsControls});
+            this._mnuOptions.Name = "_mnuOptions";
             this._mnuOptions.Size = new System.Drawing.Size(61, 20);
             this._mnuOptions.Text = "&Options";
             // 
-            // displayToolStripMenuItem
+            // _itmOptionsDisplay
             // 
-            this._itmOptionsDisplay.Name = "displayToolStripMenuItem";
+            this._itmOptionsDisplay.Name = "_itmOptionsDisplay";
             this._itmOptionsDisplay.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this._itmOptionsDisplay.Size = new System.Drawing.Size(163, 22);
+            this._itmOptionsDisplay.Size = new System.Drawing.Size(170, 22);
             this._itmOptionsDisplay.Text = "&Display...";
             this._itmOptionsDisplay.Click += new System.EventHandler(this._itmOptionsDisplay_Click);
             // 
-            // button1
+            // _btnSet
             // 
             this._btnSet.Enabled = false;
             this._btnSet.Location = new System.Drawing.Point(249, 801);
-            this._btnSet.Name = "button1";
+            this._btnSet.Name = "_btnSet";
             this._btnSet.Size = new System.Drawing.Size(75, 23);
             this._btnSet.TabIndex = 5;
             this._btnSet.Text = "SET";
             this._btnSet.UseVisualStyleBackColor = true;
             this._btnSet.Click += new System.EventHandler(this._btnSet_Click);
             // 
-            // label2
+            // _lblScore
             // 
             this._lblScore.AutoSize = true;
             this._lblScore.Location = new System.Drawing.Point(421, 807);
-            this._lblScore.Name = "label2";
+            this._lblScore.Name = "_lblScore";
             this._lblScore.Size = new System.Drawing.Size(0, 13);
             this._lblScore.TabIndex = 6;
             // 
-            // label3
+            // _lblCountdown
             // 
             this._lblCountdown.AutoSize = true;
             this._lblCountdown.Location = new System.Drawing.Point(203, 807);
-            this._lblCountdown.Name = "label3";
+            this._lblCountdown.Name = "_lblCountdown";
             this._lblCountdown.Size = new System.Drawing.Size(0, 13);
             this._lblCountdown.TabIndex = 7;
             // 
-            // panel1
+            // _pnlBoard
             // 
             this._pnlBoard.Controls.Add(this._flowBoard);
             this._pnlBoard.Location = new System.Drawing.Point(16, 27);
-            this._pnlBoard.Name = "panel1";
+            this._pnlBoard.Name = "_pnlBoard";
             this._pnlBoard.Padding = new System.Windows.Forms.Padding(2);
             this._pnlBoard.Size = new System.Drawing.Size(565, 768);
             this._pnlBoard.TabIndex = 8;
+            // 
+            // _itmOptionsControls
+            // 
+            this._itmOptionsControls.Name = "_itmOptionsControls";
+            this._itmOptionsControls.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this._itmOptionsControls.Size = new System.Drawing.Size(170, 22);
+            this._itmOptionsControls.Text = "&Controls...";
+            this._itmOptionsControls.Click += new System.EventHandler(this._itmOptionsControls_Click);
             // 
             // MainForm
             // 
@@ -196,6 +206,7 @@
         private System.Windows.Forms.Label _lblScore;
         private System.Windows.Forms.Label _lblCountdown;
         private System.Windows.Forms.Panel _pnlBoard;
+        private System.Windows.Forms.ToolStripMenuItem _itmOptionsControls;
     }
 }
 
