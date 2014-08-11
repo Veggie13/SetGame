@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace SetGame
 {
@@ -14,22 +16,22 @@ namespace SetGame
     {
         #region Class Members
         private Game _game = new Game();
-        private CardRenderer _renderer = new CardRenderer(Shapes.Pill, Shapes.Diamond, Shapes.ZigZag, Color.Red, Color.Green, Color.Purple);
         private bool _inSet = false;
         private HashSet<Player> _localPlayers = new HashSet<Player>();
-        private LocalControlHandler _singleHandler;
+        private Configuration _config = new Configuration();
         #endregion
 
         public MainForm()
         {
             InitializeComponent();
 
-            _singleHandler = new LocalControlHandler(this)
+            _config.ControlOptions = new LocalControlHandler(this)
                 {
                     UseSetButton = true,
                     UseRightMouseButton = true,
                     Key = 'S'
                 };
+            _config.DisplayOptions = new CardRenderer(Shapes.Pill, Shapes.Diamond, Shapes.ZigZag, Color.Red, Color.Green, Color.Purple);
 
             _game.BoardModified += new Action(_game_BoardModified);
             _game.BeginSet += new Action<Player>(_game_BeginSet);
@@ -59,6 +61,23 @@ namespace SetGame
                 return CardPanels.Select(cp => cp.Card);
             }
         }
+
+        string ConfigurationPath
+        {
+            get
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                return Path.Combine(path, "SetGame");
+            }
+        }
+
+        string ConfigurationFilePath
+        {
+            get
+            {
+                return Path.Combine(ConfigurationPath, "config.xml");
+            }
+        }
         #endregion
 
         #region IControlProvider
@@ -73,6 +92,7 @@ namespace SetGame
         #region MainForm
         private void MainForm_Load(object sender, EventArgs e)
         {
+            loadConfiguration();
         }
 
         private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
@@ -169,7 +189,7 @@ namespace SetGame
                     {
                         Width = _flowBoard.Width / 3 - 20,
                         Height = _flowBoard.Height / 5 - 20,
-                        Renderer = _renderer
+                        Renderer = _config.DisplayOptions
                     };
                     cardPanel.MouseClick += new MouseEventHandler(cardPanel_MouseClick);
                     return cardPanel;
@@ -224,17 +244,21 @@ namespace SetGame
         #region Menu Items
         private void _itmOptionsDisplay_Click(object sender, EventArgs e)
         {
-            var dlg = new DisplayOptionsDlg(_renderer);
+            var dlg = new DisplayOptionsDlg(_config.DisplayOptions);
             if (dlg.ShowDialog(this) == DialogResult.OK)
             {
+                saveConfiguration();
                 Invalidate(true);
             }
         }
 
         private void _itmOptionsControls_Click(object sender, EventArgs e)
         {
-            var dlg = new ControlOptionsDlg(_singleHandler);
-            dlg.ShowDialog(this);
+            var dlg = new ControlOptionsDlg(_config.ControlOptions);
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                saveConfiguration();
+            }
         }
 
         private void _itmGameNewSingle_Click(object sender, EventArgs e)
@@ -244,7 +268,7 @@ namespace SetGame
 
             _localPlayers.Add(new Player("Score")
                 {
-                    ControlHandler = _singleHandler
+                    ControlHandler = _config.ControlOptions
                 });
 
             foreach (Player p in _localPlayers)
@@ -288,6 +312,38 @@ namespace SetGame
             foreach (Player p in _localPlayers)
                 p.Dispose();
             _localPlayers.Clear();
+        }
+
+        private void loadConfiguration()
+        {
+            try
+            {
+                using (var stream = new FileStream(ConfigurationFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    var serializer = new XmlSerializer(typeof(Configuration));
+                    _config = (Configuration)serializer.Deserialize(stream);
+                }
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Directory.CreateDirectory(ConfigurationPath);
+                saveConfiguration();
+            }
+            catch (Exception)
+            {
+                saveConfiguration();
+            }
+
+            _config.ControlOptions.ControlProvider = this;
+        }
+
+        private void saveConfiguration()
+        {
+            using (var stream = new FileStream(ConfigurationFilePath, FileMode.Create, FileAccess.Write))
+            {
+                var serializer = new XmlSerializer(typeof(Configuration));
+                serializer.Serialize(stream, _config);
+            }
         }
         #endregion
     }

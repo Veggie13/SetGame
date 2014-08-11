@@ -37,11 +37,11 @@
             this._itmGameNewSingle = new System.Windows.Forms.ToolStripMenuItem();
             this._mnuOptions = new System.Windows.Forms.ToolStripMenuItem();
             this._itmOptionsDisplay = new System.Windows.Forms.ToolStripMenuItem();
+            this._itmOptionsControls = new System.Windows.Forms.ToolStripMenuItem();
             this._btnSet = new System.Windows.Forms.Button();
             this._lblScore = new System.Windows.Forms.Label();
             this._lblCountdown = new System.Windows.Forms.Label();
             this._pnlBoard = new System.Windows.Forms.Panel();
-            this._itmOptionsControls = new System.Windows.Forms.ToolStripMenuItem();
             this._mnuMain.SuspendLayout();
             this._pnlBoard.SuspendLayout();
             this.SuspendLayout();
@@ -120,6 +120,14 @@
             this._itmOptionsDisplay.Text = "&Display...";
             this._itmOptionsDisplay.Click += new System.EventHandler(this._itmOptionsDisplay_Click);
             // 
+            // _itmOptionsControls
+            // 
+            this._itmOptionsControls.Name = "_itmOptionsControls";
+            this._itmOptionsControls.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this._itmOptionsControls.Size = new System.Drawing.Size(170, 22);
+            this._itmOptionsControls.Text = "&Controls...";
+            this._itmOptionsControls.Click += new System.EventHandler(this._itmOptionsControls_Click);
+            // 
             // _btnSet
             // 
             this._btnSet.Enabled = false;
@@ -155,14 +163,6 @@
             this._pnlBoard.Padding = new System.Windows.Forms.Padding(2);
             this._pnlBoard.Size = new System.Drawing.Size(565, 768);
             this._pnlBoard.TabIndex = 8;
-            // 
-            // _itmOptionsControls
-            // 
-            this._itmOptionsControls.Name = "_itmOptionsControls";
-            this._itmOptionsControls.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this._itmOptionsControls.Size = new System.Drawing.Size(170, 22);
-            this._itmOptionsControls.Text = "&Controls...";
-            this._itmOptionsControls.Click += new System.EventHandler(this._itmOptionsControls_Click);
             // 
             // MainForm
             // 

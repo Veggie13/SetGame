@@ -39,6 +39,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,6 +56,7 @@
     </Compile>
     <Compile Include="CardRenderer.cs" />
     <Compile Include="Colours.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="ControlHandler.cs" />
     <Compile Include="ControlOptionsDlg.cs">
       <SubType>Form</SubType>
@@ -83,6 +85,7 @@
     <Compile Include="PropertySet.cs" />
     <Compile Include="Shades.cs" />
     <Compile Include="Shapes.cs" />
+    <Compile Include="XmlColor.cs" />
     <EmbeddedResource Include="ControlOptionsDlg.resx">
       <DependentUpon>ControlOptionsDlg.cs</DependentUpon>
     </EmbeddedResource>

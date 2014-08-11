@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace SetGame
 {
@@ -10,7 +11,8 @@ namespace SetGame
         event Action SetRequest;
     }
 
-    class LocalControlHandler : IControlHandler
+    [Serializable]
+    public class LocalControlHandler : IControlHandler
     {
         public interface IControlProvider
         {
@@ -19,21 +21,37 @@ namespace SetGame
             event Action<char> KeyPressed;
         }
 
+        #region Constructors
+        public LocalControlHandler()
+        {
+            UseRightMouseButton = false;
+            Key = '\0';
+        }
+        
         public LocalControlHandler(IControlProvider controlProvider, char key = '\0')
         {
             UseRightMouseButton = false;
             Key = key;
-
-            controlProvider.SetRequestClicked += new Action(controlProvider_SetRequestClicked);
-            controlProvider.RightMouseClicked += new Action(controlProvider_RightMouseClicked);
-            controlProvider.KeyPressed += new Action<char>(controlProvider_KeyPressed);
+            ControlProvider = controlProvider;
         }
+        #endregion
 
         #region IControlHandler
         public event Action SetRequest = delegate { };
         #endregion
 
         #region Properties
+        [IgnoreDataMember]
+        public IControlProvider ControlProvider
+        {
+            set
+            {
+                value.SetRequestClicked += new Action(controlProvider_SetRequestClicked);
+                value.RightMouseClicked += new Action(controlProvider_RightMouseClicked);
+                value.KeyPressed += new Action<char>(controlProvider_KeyPressed);
+            }
+        }
+
         public bool UseSetButton
         {
             get;

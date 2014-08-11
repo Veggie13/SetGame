@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Xml.Serialization;
 
 namespace SetGame
 {
-    class CardRenderer
+    [Serializable]
+    public class CardRenderer
     {
         #region Static Members
         private static readonly Dictionary<Shapes, Point[]> ShapeMap = new Dictionary<Shapes, Point[]>();
@@ -76,6 +78,11 @@ namespace SetGame
         private Dictionary<Colours, Color> _colours = new Dictionary<Colours, Color>();
         #endregion
 
+        #region Constructors
+        public CardRenderer()
+        {
+        }
+        
         public CardRenderer(Shapes alpha, Shapes beta, Shapes gamma, Color first, Color second, Color third)
         {
             _shapes[ShapeID.Alpha] = alpha;
@@ -86,6 +93,7 @@ namespace SetGame
             _colours[Colours.Second] = second;
             _colours[Colours.Third] = third;
         }
+        #endregion
 
         #region Properties
         public Shapes ShapeAlpha
@@ -106,18 +114,21 @@ namespace SetGame
             set { _shapes[ShapeID.Gamma] = value; }
         }
 
+        [XmlElement(Type=typeof(XmlColor))]
         public Color ColourFirst
         {
             get { return _colours[Colours.First]; }
             set { _colours[Colours.First] = value; }
         }
 
+        [XmlElement(Type = typeof(XmlColor))]
         public Color ColourSecond
         {
             get { return _colours[Colours.Second]; }
             set { _colours[Colours.Second] = value; }
         }
 
+        [XmlElement(Type = typeof(XmlColor))]
         public Color ColourThird
         {
             get { return _colours[Colours.Third]; }
