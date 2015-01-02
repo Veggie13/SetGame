@@ -64,6 +64,12 @@
     <Compile Include="ControlOptionsDlg.Designer.cs">
       <DependentUpon>ControlOptionsDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="DebugDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DebugDlg.Designer.cs">
+      <DependentUpon>DebugDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="DisplayOptionsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,6 +94,9 @@
     <Compile Include="XmlColor.cs" />
     <EmbeddedResource Include="ControlOptionsDlg.resx">
       <DependentUpon>ControlOptionsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DebugDlg.resx">
+      <DependentUpon>DebugDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DisplayOptionsDlg.resx">
       <DependentUpon>DisplayOptionsDlg.cs</DependentUpon>

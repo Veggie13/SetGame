@@ -20,8 +20,13 @@ namespace SetGame
                 (int)PropertyTypes.Number, (int)number);
         }
 
-        internal Card(string code)
+        internal Card(string code, Dictionary<char, char> dict = null)
         {
+            if (dict != null)
+            {
+                code = translate(code, dict);
+            }
+
             _properties = new PropertySet(
                 (int)PropertyTypes.Colour, (int)(code[0] - '0'),
                 (int)PropertyTypes.Shade, (int)(code[1] - '0'),
@@ -94,6 +99,17 @@ namespace SetGame
         public override string ToString()
         {
             return string.Format("{0}{1}{2}{3}", (int)Colour, (int)Shade, (int)Shape, (int)Number);
+        }
+        #endregion
+
+        #region Private Helpers
+        private string translate(string str, Dictionary<char, char> translator)
+        {
+            foreach (var key in translator.Keys)
+            {
+                str = str.Replace(key, translator[key]);
+            }
+            return str;
         }
         #endregion
     }

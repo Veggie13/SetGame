@@ -35,9 +35,11 @@
             this._mnuMain = new System.Windows.Forms.MenuStrip();
             this._mnuGame = new System.Windows.Forms.ToolStripMenuItem();
             this._itmGameNewSingle = new System.Windows.Forms.ToolStripMenuItem();
+            this._itmGameNewPredef = new System.Windows.Forms.ToolStripMenuItem();
             this._mnuOptions = new System.Windows.Forms.ToolStripMenuItem();
             this._itmOptionsDisplay = new System.Windows.Forms.ToolStripMenuItem();
             this._itmOptionsControls = new System.Windows.Forms.ToolStripMenuItem();
+            this._itmOptionsShowDebug = new System.Windows.Forms.ToolStripMenuItem();
             this._btnSet = new System.Windows.Forms.Button();
             this._lblScore = new System.Windows.Forms.Label();
             this._lblCountdown = new System.Windows.Forms.Label();
@@ -90,7 +92,8 @@
             // _mnuGame
             // 
             this._mnuGame.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._itmGameNewSingle});
+            this._itmGameNewSingle,
+            this._itmGameNewPredef});
             this._mnuGame.Name = "_mnuGame";
             this._mnuGame.Size = new System.Drawing.Size(50, 20);
             this._mnuGame.Text = "&Game";
@@ -103,11 +106,19 @@
             this._itmGameNewSingle.Text = "New Single Player";
             this._itmGameNewSingle.Click += new System.EventHandler(this._itmGameNewSingle_Click);
             // 
+            // _itmGameNewPredef
+            // 
+            this._itmGameNewPredef.Name = "_itmGameNewPredef";
+            this._itmGameNewPredef.Size = new System.Drawing.Size(187, 22);
+            this._itmGameNewPredef.Text = "New Predefined Deck";
+            this._itmGameNewPredef.Click += new System.EventHandler(this._itmGameNewPredef_Click);
+            // 
             // _mnuOptions
             // 
             this._mnuOptions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._itmOptionsDisplay,
-            this._itmOptionsControls});
+            this._itmOptionsControls,
+            this._itmOptionsShowDebug});
             this._mnuOptions.Name = "_mnuOptions";
             this._mnuOptions.Size = new System.Drawing.Size(61, 20);
             this._mnuOptions.Text = "&Options";
@@ -116,7 +127,7 @@
             // 
             this._itmOptionsDisplay.Name = "_itmOptionsDisplay";
             this._itmOptionsDisplay.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this._itmOptionsDisplay.Size = new System.Drawing.Size(170, 22);
+            this._itmOptionsDisplay.Size = new System.Drawing.Size(178, 22);
             this._itmOptionsDisplay.Text = "&Display...";
             this._itmOptionsDisplay.Click += new System.EventHandler(this._itmOptionsDisplay_Click);
             // 
@@ -124,9 +135,17 @@
             // 
             this._itmOptionsControls.Name = "_itmOptionsControls";
             this._itmOptionsControls.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this._itmOptionsControls.Size = new System.Drawing.Size(170, 22);
+            this._itmOptionsControls.Size = new System.Drawing.Size(178, 22);
             this._itmOptionsControls.Text = "&Controls...";
             this._itmOptionsControls.Click += new System.EventHandler(this._itmOptionsControls_Click);
+            // 
+            // _itmOptionsShowDebug
+            // 
+            this._itmOptionsShowDebug.CheckOnClick = true;
+            this._itmOptionsShowDebug.Name = "_itmOptionsShowDebug";
+            this._itmOptionsShowDebug.Size = new System.Drawing.Size(178, 22);
+            this._itmOptionsShowDebug.Text = "Show Debug Dialog";
+            this._itmOptionsShowDebug.CheckedChanged += new System.EventHandler(this._itmOptionsShowDebug_CheckedChanged);
             // 
             // _btnSet
             // 
@@ -207,6 +226,8 @@
         private System.Windows.Forms.Label _lblCountdown;
         private System.Windows.Forms.Panel _pnlBoard;
         private System.Windows.Forms.ToolStripMenuItem _itmOptionsControls;
+        private System.Windows.Forms.ToolStripMenuItem _itmGameNewPredef;
+        private System.Windows.Forms.ToolStripMenuItem _itmOptionsShowDebug;
     }
 }
 

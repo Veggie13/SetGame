@@ -80,6 +80,22 @@ namespace SetGame
         public IEnumerable<Card> Board
         {
             get { return _board; }
+            internal set
+            {
+                _board.Clear();
+                _board.AddRange(value);
+                BoardModified();
+            }
+        }
+
+        internal IEnumerable<Card> Deck
+        {
+            get { return _deck; }
+            set
+            {
+                _deck.Clear();
+                _deck.AddRange(value);
+            }
         }
         #endregion
 
@@ -135,6 +151,11 @@ namespace SetGame
             _players.Clear();
         }
 
+        public List<HashSet<Card>> GetOptionSets(IEnumerable<Card> set)
+        {
+            return set.PowerSet(3, 3).Where(s => validate(s)).ToList();
+        }
+        
         public HashSet<Card> GetOptions(IEnumerable<Card> set)
         {
             return set.PowerSet(3, 3).Where(s => validate(s))
@@ -226,6 +247,18 @@ namespace SetGame
             HashSet<Card> lookup = new HashSet<Card>(startingBoard);
             int removed = _deck.RemoveAll(c => lookup.Contains(c));
             deal(startingBoard, true);
+        }
+
+        internal void DebugBeginGame(IEnumerable<string> cardCodes, Dictionary<char, char> dict = null)
+        {
+            if (_started || _players.Count < 1)
+                return;
+
+            _started = true;
+            _deck.Clear();
+            _deck.AddRange(cardCodes.Select(c => new Card(c, dict)));
+
+            replenishBoard();
         }
 
         private List<Card> deal(int n, bool signal = true)

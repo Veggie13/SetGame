@@ -19,6 +19,7 @@ namespace SetGame
         private bool _inSet = false;
         private HashSet<Player> _localPlayers = new HashSet<Player>();
         private Configuration _config = new Configuration();
+        private DebugDlg _debugDlg = new DebugDlg();
         #endregion
 
         public MainForm()
@@ -41,6 +42,8 @@ namespace SetGame
             _game.PlayersChanged += new Action(_game_PlayersChanged);
             _game.ShotClockTick += new Action<int>(_game_ShotClockTick);
             _game.GameOver += new Action(_game_GameOver);
+
+            _debugDlg.VisibleChanged += _debugDlg_VisibleChanged;
 
             setupKeyEvents(this);
         }
@@ -93,12 +96,18 @@ namespace SetGame
         private void MainForm_Load(object sender, EventArgs e)
         {
             loadConfiguration();
+            _debugDlg.Game = _game;
         }
 
         private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
         {
             KeyPressed(e.KeyChar);
             e.Handled = true;
+        }
+
+        private void _debugDlg_VisibleChanged(object sender, EventArgs e)
+        {
+            _itmOptionsShowDebug.Checked = _debugDlg.Visible;
         }
         #endregion
 
@@ -227,15 +236,17 @@ namespace SetGame
 
         private void _btnHint_Click(object sender, EventArgs e)
         {
-            var choices = _game.GetOptions(Cards);
+            var choices = _game.GetOptionSets(Cards);
             if (choices.Count > 0)
             {
                 foreach (var cp in CardPanels)
                     cp.Selected = false;
 
                 Random rand = new Random();
-                var panel = CardPanels.Where(cp => choices.Contains(cp.Card)).OrderBy(cp => rand.Next()).First();
-                panel.Selected = true;
+                var set = choices.OrderBy(cp => rand.Next()).First();
+                var panels = CardPanels.Where(cp => set.Contains(cp.Card)).Take(2);
+                foreach (var panel in panels)
+                    panel.Selected = true;
             }
             this.Focus();
         }
@@ -261,6 +272,11 @@ namespace SetGame
             }
         }
 
+        private void _itmOptionsShowDebug_CheckedChanged(object sender, EventArgs e)
+        {
+            _debugDlg.Visible = _itmOptionsShowDebug.Checked;
+        }
+
         private void _itmGameNewSingle_Click(object sender, EventArgs e)
         {
             if (_game.Active)
@@ -274,6 +290,53 @@ namespace SetGame
             foreach (Player p in _localPlayers)
                 _game.AddPlayer(p);
             _game.BeginGame();
+        }
+
+        private void _itmGameNewPredef_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog()
+            {
+                Multiselect = false,
+                DefaultExt = "txt",
+                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
+            };
+            if (ofd.ShowDialog(this) != System.Windows.Forms.DialogResult.OK)
+                return;
+
+            if (_game.Active)
+                finishGame();
+
+            _localPlayers.Add(new Player("Score")
+            {
+                ControlHandler = _config.ControlOptions
+            });
+
+            foreach (Player p in _localPlayers)
+                _game.AddPlayer(p);
+
+            // parse
+            Dictionary<char, char> translator = new Dictionary<char, char>();
+            List<string> lines = new List<string>();
+            using (var reader = new StreamReader(ofd.OpenFile()))
+            {
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line))
+                        break;
+                    for (int c = 0; c < line.Length; c++)
+                    {
+                        translator[line[c]] = (char)('1' + c);
+                    }
+                }
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    lines.Add(line);
+                }
+            }
+
+            _game.DebugBeginGame(lines, translator);
         }
         #endregion
         #endregion
