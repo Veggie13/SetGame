@@ -85,6 +85,7 @@
     <Compile Include="PropertySet.cs" />
     <Compile Include="Shades.cs" />
     <Compile Include="Shapes.cs" />
+    <Compile Include="SinglePlayerControlOptions.cs" />
     <Compile Include="XmlColor.cs" />
     <EmbeddedResource Include="ControlOptionsDlg.resx">
       <DependentUpon>ControlOptionsDlg.cs</DependentUpon>

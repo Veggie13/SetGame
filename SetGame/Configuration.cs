@@ -14,7 +14,7 @@ namespace SetGame
             set;
         }
 
-        public LocalControlHandler ControlOptions
+        public SinglePlayerControlOptions ControlOptions
         {
             get;
             set;

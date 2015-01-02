@@ -11,7 +11,6 @@ namespace SetGame
         event Action SetRequest;
     }
 
-    [Serializable]
     public class LocalControlHandler : IControlHandler
     {
         public interface IControlProvider
@@ -41,7 +40,6 @@ namespace SetGame
         #endregion
 
         #region Properties
-        [IgnoreDataMember]
         public IControlProvider ControlProvider
         {
             set
